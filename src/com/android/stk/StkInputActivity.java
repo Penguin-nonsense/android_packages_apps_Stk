@@ -25,6 +25,7 @@ import android.os.SystemClock;
 import android.telephony.CarrierConfigManager;
 import android.text.Editable;
 import android.text.InputFilter;
+import android.text.InputType;
 import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.text.method.PasswordTransformationMethod;
@@ -35,6 +36,7 @@ import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -218,6 +220,10 @@ public class StkInputActivity extends AppCompatActivity implements View.OnClickL
         if (mPopupMenu != null) {
             mPopupMenu.dismiss();
         }
+        if (mTextIn != null) {
+            InputMethodManager imm = getSystemService(InputMethodManager.class);
+            imm.hideSoftInputFromWindow(mTextIn.getWindowToken(), 0);
+        }
     }
 
     @Override
@@ -354,6 +360,7 @@ public class StkInputActivity extends AppCompatActivity implements View.OnClickL
         return false;
     }
 
+    @SuppressWarnings("MissingSuperCall") // TODO: Fix me
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         CatLog.d(LOG_TAG, "onSaveInstanceState: " + mSlotId);
@@ -446,6 +453,7 @@ public class StkInputActivity extends AppCompatActivity implements View.OnClickL
         boolean hideHelper = false;
         if (mStkInput.digitOnly) {
             mTextIn.setKeyListener(StkDigitsKeyListener.getInstance());
+            mTextIn.setInputType(InputType.TYPE_CLASS_NUMBER);
             inTypeId = R.string.digits;
             hideHelper = StkAppService.getBooleanCarrierConfig(this,
                     CarrierConfigManager.KEY_HIDE_DIGITS_HELPER_TEXT_ON_STK_INPUT_SCREEN_BOOL,
